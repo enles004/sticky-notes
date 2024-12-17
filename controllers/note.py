@@ -17,7 +17,7 @@ def get_note():
              "color": note.color,
              "created": note.created}
             for note in Note.get_all_note(user_id=session_id)]
-    return render_template("note.html", data=data)
+    return render_template("note.html", data=data), 200
 
 
 @blue_note.post("/note")
@@ -33,7 +33,7 @@ def post_note():
     return {"id": result,
             "title": title,
             "description": description,
-            "color": color}
+            "color": color}, 201
 
 
 @blue_note.patch("/note/<int:id>")
@@ -48,7 +48,7 @@ def patch_note(id):
     title = payload["title"]
     description = payload["description"]
     Note.update_note(note_id=id, title=title, description=description)
-    return {"message": "updated"}
+    return {"message": "updated"}, 200
 
 
 @blue_note.delete("/note/<int:id>")
@@ -60,4 +60,4 @@ def delete_note(id):
     if not note:
         return {'message': "not found"}, 404
     Note.delete_note(note_id=id)
-    return {"message": "deleted"}
+    return {"message": "deleted"}, 200

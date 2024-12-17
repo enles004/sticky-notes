@@ -82,7 +82,7 @@
             const contentInput = note.querySelector('.content');
 
             document.body.addEventListener('click', (e) => {
-                if (!note.contains(e.target) && note.classList.contains('expanded')) {
+                if (note.classList.contains('expanded')) {
                     updateNote(note, titleInput.value, contentInput.value);
                     note.classList.remove('expanded');
                 }

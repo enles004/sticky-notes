@@ -10,7 +10,7 @@ blue_user = Blueprint('auth', __name__)
 
 @blue_user.get("/")
 def dashboard():
-    return render_template("index.html")
+    return render_template("index.html"), 200
 
 
 @blue_user.get("/regis_cookie")
@@ -21,12 +21,12 @@ def regis_u():
     User.create_user(user_id)
     response = make_response(redirect(url_for('note.get_note')))
     response.set_cookie('user_id', value=user_id, max_age=10 * 365 * 24 * 60 * 60)
-    return response
+    return response, 200
 
 
 @blue_user.get("/get_cookie")
 def get_cookie():
-    return {"data": request.cookies.get('user_id')}
+    return {"data": request.cookies.get('user_id')}, 200
 
 
 @blue_user.delete("/cookie")
@@ -35,4 +35,4 @@ def delete_cookie():
     User.delete_user(session_id)
     response = make_response({"message": "cookie deleted"})
     response.delete_cookie('user_id')
-    return response
+    return response, 200
