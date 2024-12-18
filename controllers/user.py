@@ -2,7 +2,6 @@ import time
 import uuid
 
 from flask import Blueprint, request, make_response, render_template, redirect, url_for
-
 from models.user import User
 
 blue_user = Blueprint('auth', __name__)
@@ -19,8 +18,10 @@ def regis_u():
         return redirect(url_for('note.get_note'))
     user_id = str(uuid.uuid4()) + str(int(time.time() * 1000))
     User.create_user(user_id)
-    response = make_response(redirect(url_for('note.get_note')))
-    response.set_cookie('user_id', value=user_id, max_age=10 * 365 * 24 * 60 * 60)
+    response = make_response()
+    response.set_cookie('user_id', value=user_id, max_age=10 * 365 * 24 * 60 * 60, secure=False,
+    samesite='None',
+    httponly=True)
     return response, 200
 
 
