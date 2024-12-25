@@ -1,10 +1,8 @@
-from flask import Blueprint, request, redirect, url_for, render_template, jsonify
+from flask import Blueprint, request, redirect, url_for, jsonify
 
 from models.note import Note
-from models.user import User
 
 blue_note = Blueprint("note", __name__)
-
 
 @blue_note.get("/api/note")
 def get_note():
@@ -33,12 +31,13 @@ def post_note():
     title = payload["title"]
     description = payload["description"]
     color = payload["color"]
-    result = Note.create_note(session_id, title, description, color)
+    new_note = Note.create_note(session_id, title, description, color)
 
-    data = [{"id": result,
+    data = [{"id": new_note[0],
             "title": title,
             "description": description,
-            "color": color}]
+             "color": color,
+             "created": new_note[1].strftime("%Y-%m-%d %H:%M:%S")}]
 
     return jsonify({"data": data,
                     "message": "Note created successfully!",
@@ -46,28 +45,44 @@ def post_note():
                     }), 201
 
 
-@blue_note.patch("/note/<int:id>")
+@blue_note.patch("/api/note/<int:id>")
 def patch_note(id):
     session_id = request.cookies.get('user_id')
     if not session_id:
         return redirect(url_for('auth.regis_u'))
     note = Note.get_one_note(session_id=session_id, note_id=int(id))
     if not note:
-        return {'message': "not found"}, 404
+        return {'message': "Not found",
+                "status": 404}, 404
     payload = request.get_json()
     title = payload["title"]
     description = payload["description"]
     Note.update_note(note_id=id, title=title, description=description)
-    return {"message": "updated"}, 200
+
+    data = {"id": id,
+            "title": title,
+            "description": description}
+    return {"status": 200,
+            "message": "Note updated successfully!",
+            "data": [data]}, 200
 
 
-@blue_note.delete("/note/<int:id>")
+@blue_note.delete("/api/note/<int:id>")
 def delete_note(id):
     session_id = request.cookies.get('user_id')
     if not session_id:
         return redirect(url_for('auth.regis_u'))
     note = Note.get_one_note(session_id=session_id, note_id=int(id))
     if not note:
-        return {'message': "not found"}, 404
+        return {'message': "Not found",
+                "status": 404}, 404
     Note.delete_note(note_id=id)
-    return {"message": "deleted"}, 200
+    return jsonify({"message": "Note deleted successfully!",
+                    "status": 200,
+                    "data": [{"id": id}]}), 200
+
+
+@blue_note.put("/api/note/<int:id>")
+def method_put_not_allowed(id):
+    return jsonify({"message": "PUT Method Not Allowed",
+                    "status": "405"}), 405

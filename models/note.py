@@ -51,13 +51,13 @@ class Note(Base):
             check_user = db.query(User).filter(User.session_id == user_id).first()
             if check_user:
                 sql = text(
-                    "INSERT INTO notes (user_id, title, description, color) VALUES (:user_id, :title, :description, :color) RETURNING id")
+                    "INSERT INTO notes (user_id, title, description, color) VALUES (:user_id, :title, :description, :color) RETURNING id, created;")
                 result = db.execute(sql, {"user_id": check_user.id, "title": title, "description": description,
                                           "color": color})
-                note_id = result.scalar()
+                note = result.fetchone()
                 db.commit()
                 db.remove()
-                return note_id
+                return note
             raise Exception("User is not valid")
         except Exception as e:
             raise Exception(f"err: {e}")
