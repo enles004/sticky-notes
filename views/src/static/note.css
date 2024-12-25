@@ -33,7 +33,7 @@ header {
     margin-left: 20px;
     background-color: #fff;
     border-radius: 25px;
-    background-image: url('dots.svg');
+    background-image: url('../assets/dots.svg');
     background-size: 30px 30px;
     height: 783px;
     display: flex;

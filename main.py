@@ -5,8 +5,8 @@ from controllers.note import blue_note
 from controllers.user import blue_user
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
 
+CORS(app, supports_credentials=True)
 
 @app.after_request
 def after_request(response):
